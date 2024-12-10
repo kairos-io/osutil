@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/tredoe/osutil/file"
+	"github.com/tredoe/osutil/v2/edi"
 )
 
 var (
@@ -133,8 +133,8 @@ func (c *Config) Unmarshal(out interface{}) error {
 				v, _ := strconv.ParseFloat(value, 64)
 				fieldV.SetFloat(v)
 			/*case reflect.Float32:
-				v, _ := strconv.ParseFloat(value, 32)
-				fieldV.SetFloat(v)*/
+			v, _ := strconv.ParseFloat(value, 32)
+			fieldV.SetFloat(v)*/
 
 			case reflect.String:
 				fieldV.SetString(value)
@@ -201,11 +201,11 @@ func (c *Config) Set(key, value string) error {
 	}
 
 	separator := string(c.Separator())
-	replAt := []file.ReplacerAtLine{
-		{key + separator, separator + ".*", separator + value},
+	replAt := []edi.ReplacerAtLine{
+		{Line: key + separator, Search: separator + ".*", Replace: separator + value},
 	}
 
-	if err := file.ReplaceAtLine(c.filename, replAt); err != nil {
+	if err := edi.ReplaceAtLine(c.filename, nil, replAt); err != nil {
 		return err
 	}
 	c.data[key] = value
